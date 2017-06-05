@@ -18,13 +18,18 @@ class SudokuSolver(object):
     def solve(self):
         return
 
-    def checkHor(self):
+    # Checks horizontal at row for similar values
+    # Mark set if it adds marks or removes marks
+    # Sarr is array of sudoku squares
+    def checkHor(self, row, mark=0, sarr):
+        if mark:
+    
         return
 
-    def checkVer(self):
+    def checkVer(self, mark=0):
         return
 
-    def checkNon(self):
+    def checkNon(self, mark=0):
         return
     
     def validate(self, fname):
