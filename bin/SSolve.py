@@ -13,6 +13,8 @@ class SSolve(object):
         self.iterMarks  = 0
         self.iterSolve  = 0
         self.iterRemove = 0
+        self.trials = 0
+        self.totaltrials = 200
         self.showPnums  = spnums
         #self.
 
@@ -70,7 +72,8 @@ class SSolve(object):
     #        and remove that number from each
     # 2. Check 
     def checkAll(self, finish = False, count=0):
-        while count < 81:
+        while count < 81 and (self.trials < self.totaltrials):
+            self.trials+=1
             count = 0
             for row in range(0,9):
                 for col in range(0,9):
