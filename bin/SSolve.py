@@ -2,6 +2,8 @@ import os
 import time
 from Sbox import Sbox
 
+TSPEED = .25
+
 class SSolve(object):
 
     # Initialize file, 9x9 array of Ssquare objects
@@ -28,12 +30,7 @@ class SSolve(object):
         col = 0
         for list in self.ssq:
             for box in list:
-                count+=1
                 print "{0:d} ".format(box.actual),
-                if row%3 == 0:
-                    print " || ",
-                else:
-                    print " | ",
             print
         print
 
@@ -65,12 +62,13 @@ class SSolve(object):
                     if self.ssq[row][col].actual == 0:
                         for val in self.ssq[row][col].pnums:
                             if self.checkifSingle(row, col, val):
+                                os.system('clear')
                                 self.ssq[row][col].actual = val
                                 del self.ssq[row][col].pnums[:]
                                 self.removeAll(row, col, val)
-                                #self.printPuzzle()
+                                self.printPuzzle()
                                 #self.printPnums()
-                                time.sleep(self.speed)
+                                time.sleep(TSPEED)
             #                    print "NOT SINGLE\n"
                             
                     else:
