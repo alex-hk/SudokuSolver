@@ -2,16 +2,14 @@ import os
 import time
 from Sbox import Sbox
 
-TSPEED = .25
-
 class SSolve(object):
 
     # Initialize file, 9x9 array of Ssquare objects
     # (View Ssquare.py for more info on Ssquare object)
-    def __init__(self, filename):
+    def __init__(self, filename, speed):
         self.file = open(filename)
         self.ssq = [ [Sbox() for row in range(9)] for row in range(9)]
-        self.speed = .25
+        self.speed = speed
 
 
     def initSsq(self):
@@ -68,7 +66,10 @@ class SSolve(object):
                                 self.removeAll(row, col, val)
                                 self.printPuzzle()
                                 #self.printPnums()
-                                time.sleep(TSPEED)
+                                if self.speed > 0:
+                                    time.sleep(self.speed)
+                                else:
+                                    raw_input("Press Enter to continue...")
             #                    print "NOT SINGLE\n"
                             
                     else:
@@ -76,7 +77,7 @@ class SSolve(object):
                         count+=1
 
             #print count
-        self.printPuzzle()
+        #self.printPuzzle()
 
     def removeAll(self, row, col, val):
         srow = row / 3

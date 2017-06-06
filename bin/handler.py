@@ -1,20 +1,19 @@
 from SSolve import SSolve
 
-x = SSolve("data/easy4.txt")
-x.initSsq()
+filename = "data/easy"
+extension = ".txt"
 
-#for list in x.ssq:
-#    for box in list:
-#        print box.actual,
-#    print
+print "Welcome to Aleksandar Veselinovic's Sudoku Solver"
+print "The program runs at a specified speed"
+print "1 is one second, .5 is half a second, below 0 is press to continue"
+speed = raw_input("Please enter a speed: ")
 
-x.calcMarks()
-x.printPuzzle()
+for num in range(1,5):
+    fname = filename + str(num) + extension
+    x = SSolve(fname, float(speed))
+    x.initSsq()
+    x.calcMarks()
+    x.solve()
+    raw_input("Press Enter to continue...")
 
-for list in x.ssq:
-    for box in list:
-        print box.pnums,
-    print
-
-x.solve()
-#x.printPuzzle()
+print "Thank you for using my program"
