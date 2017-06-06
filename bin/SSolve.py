@@ -1,4 +1,5 @@
 import os
+import time
 from Sbox import Sbox
 
 class SSolve(object):
@@ -8,6 +9,7 @@ class SSolve(object):
     def __init__(self, filename):
         self.file = open(filename)
         self.ssq = [ [Sbox() for row in range(9)] for row in range(9)]
+        self.speed = .25
 
 
     def initSsq(self):
@@ -21,6 +23,32 @@ class SSolve(object):
                 col+=1
             row+=1
 
+    def printPuzzle(self):
+        row = 0
+        col = 0
+        for list in self.ssq:
+            for box in list:
+                count+=1
+                print "{0:d} ".format(box.actual),
+                if row%3 == 0:
+                    print " || ",
+                else:
+                    print " | ",
+            print
+        print
+
+    def printPnums(self):
+        for list in self.ssq:
+            for box in list:
+                print box.pnums,
+            print
+        print
+
+
+
+    def solve(self):
+        self.calcMarks()
+        self.checkAll(False)
 
     # Solve puzzle
     # Steps:
@@ -29,53 +57,76 @@ class SSolve(object):
     #     1. Check each Ssquare in horizontal, vertical, and 3x3 square
     #        and remove that number from each
     # 2. Check 
-    def solve(self, finish = False):
-        finish = True
-        self.calcMarks()
-        for row in range(0,9):
-            for col in range(0,9):
-                if self.ssq[row][col].actual == 0:
-                    for val in self.ssq[row][col].pnums:
-                        if self.checkifSingle(row, col, val):
-                            self.ssq[row][col].actual = val
-                        else:
-                            finsh = False
-        if not finish:
-            self.solve(finish)
+    def checkAll(self, finish = False, count=0):
+        while count < 81:
+            count = 0
+            for row in range(0,9):
+                for col in range(0,9):
+                    if self.ssq[row][col].actual == 0:
+                        for val in self.ssq[row][col].pnums:
+                            if self.checkifSingle(row, col, val):
+                                self.ssq[row][col].actual = val
+                                del self.ssq[row][col].pnums[:]
+                                self.removeAll(row, col, val)
+                                #self.printPuzzle()
+                                #self.printPnums()
+                                time.sleep(self.speed)
+            #                    print "NOT SINGLE\n"
+                            
+                    else:
+             #           print "Value is not 0"
+                        count+=1
+
+            #print count
+        self.printPuzzle()
+
+    def removeAll(self, row, col, val):
+        srow = row / 3
+        scol = col / 3
+        box = (srow*3) + scol
+        self.removeVer(col, val)
+        self.removeHor(row, val)
+        self.removeBox(box, val)
 
     # Checks if value exists in horizontal
     def checkHor(self, row, val, mark=False):
         count = 0
         for i in range(0,9):
             if mark:
+          #      print "Checking horizontal if value is single"
                 if self.ssq[row][i].actual == 0 and val in self.ssq[row][i].pnums:
                     count+=1
             else:
                 if self.ssq[row][i].actual == val:
                     return True
         if mark:
-            return count > 1
-        return False
+            return count == 1
+        else:
+            return False
 
     # Check if value exists in vertical
     def checkVer(self, col, val, mark=False):
         count=0
         for i in range(0,9):
             if mark:
+         #       print "Checking vertical if value is single"
                 if self.ssq[i][col].actual == 0 and val in self.ssq[i][col].pnums:
                     count+=1
             else:
                 if self.ssq[i][col].actual == val:
                     return True
         if mark:
-            return count > 1
-        return False
+            return count == 1
+        else:
+            return False
     
     def checkifSingle(self, row, col, val):
         srow = row / 3
         scol = col / 3
         box = (srow*3) + scol
-        if self.checkbox(box, val, True) and self.checkHor(row, val, True) and self.checkVer(col, val, True):
+        #print "Checking if Single"
+        if self.checkbox(box, val, True) or self.checkHor(row, val, True) or self.checkVer(col, val, True):
+            #print "Value {0:d} single".format(val)
             return True
         return False
 
@@ -84,17 +135,40 @@ class SSolve(object):
         srow = (box/3)*3
         scol = (box%3)*3
         count = 0
-        for row in range(srow, 3):
-            for col in range(scol, 3):
-                if mark:
-                    if self.ssq[row][col].actual != 0 and val in self.ssq[row][col].pnums:
+        for row in range(srow, srow+3):
+            for col in range(scol, scol+3):
+           #     print "Stuff"
+                if mark is True:
+                    #print "Checking box if value is single"
+                    if self.ssq[row][col].actual == 0 and val in self.ssq[row][col].pnums:
+                        #print "Box contains value"
                         count+=1
                 else:
                     if self.ssq[row][col].actual == val:
                         return True
         if mark:
-            return count > 1
-        return False
+            return count == 1
+        else:
+            return False
+
+    def removeVer(self, col, val):
+        for i in range(0,9):
+            if val in self.ssq[i][col].pnums:
+                self.ssq[i][col].pnums.remove(val)
+
+    def removeHor(self, row, val):
+        for i in range(0,9):
+            if val in self.ssq[row][i].pnums:
+                self.ssq[row][i].pnums.remove(val)
+
+    def removeBox(self, box, val):
+        srow = (box/3)*3
+        scol = (box%3)*3
+        for row in range(srow, srow+3):
+            for col in range(scol, scol+3):
+                if val in self.ssq[row][col].pnums:
+                    self.ssq[row][col].pnums.remove(val)
+
 
     # Check if done
     def validate(self, fname):
@@ -117,7 +191,7 @@ class SSolve(object):
                     scol = col / 3
                     box = (srow*3) + scol
                     for val in range(1,10):
-                        if not self.checkbox(box, val) and not self.checkHor(row, val) and not self.checkVer(col, val):
+                        if not self.checkbox(box, val, False) and not self.checkHor(row, val, False) and not self.checkVer(col, val, False):
                             self.ssq[row][col].addPnum(val)
 
 

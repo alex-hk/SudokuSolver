@@ -9,17 +9,12 @@ x.initSsq()
 #    print
 
 x.calcMarks()
-
-#for list in x.ssq:
-#    for box in list:
-#        print box.pnums,
-#    print
-
-x.solve(False)
+x.printPuzzle()
 
 for list in x.ssq:
     for box in list:
-        print box.actual,
+        print box.pnums,
     print
 
-
+x.solve()
+#x.printPuzzle()
